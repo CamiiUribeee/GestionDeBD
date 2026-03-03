@@ -28,3 +28,36 @@ console.log("hola")
     console.log(json);
     res.send(json);
  })   
+
+
+ //metodos update y delete: 
+
+app.get("/update", async(redis,res) => {
+    const edad=20;
+    const data = await redis.get('info:03578');
+    if(!data){
+        return res.json({'sucess': false, 'data':[], 'msg':'Not found'}, 404)
+    }
+    let json = JSON.parse(data);
+    //agrego la key:
+    json.edad=edad;
+    const response= await redis.set('info:03578', JSON.stringify(json), {EX:300});
+    const r = await redis.get('info:03578');
+    res.json({"sucess": response ==='OK', data:r, msg:response},200)
+})
+
+
+app.get('/hset', async(req,res)=>{
+    const response = await redis.hSet('info:192214', {
+        'name': 'camila',
+        'lastname': 'uribe',
+        'age':20
+    });
+    await redis.expire('info:192214', 300)
+    res.send(response)
+})
+
+app.get('/getHash', (req,res)=>{
+    
+})
+
