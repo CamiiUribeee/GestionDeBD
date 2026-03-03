@@ -8,29 +8,29 @@ app.get("/save" , async (req,res)=>{
         "nombre": "camila",
         "apellido":"uribe"
     }
-let a = await redis.set( 'info:03578',
-JSON.stringify(json),
- {
-EX:120
- }
- )
-res.send(a);
+    let a = await redis.set( 'info:03578',
+    JSON.stringify(json),
+        {
+            EX:120
+        }
+    )
+    res.send(a);0
 })
 app.listen(3001,()=>{
-console.log("hola")
- })
+    console.log("hola")
+})
 
 
- app.get("/get", async (req,res)=>{
+app.get("/get", async (req,res)=>{
     const data=await redis.get('info:03578');
     console.log(data);
     const json = JSON.parse(data);
     console.log(json);
     res.send(json);
- })   
+})   
 
 
- //metodos update y delete: 
+//metodos update y delete: 
 
 app.get("/update", async(redis,res) => {
     const edad=20;
@@ -57,7 +57,23 @@ app.get('/hset', async(req,res)=>{
     res.send(response)
 })
 
-app.get('/getHash', (req,res)=>{
-    
+//borrar argumento por argumento 
+app.get("/delete", async (req,res)=>{
+    //const data = await redis.del('info:192214')
+    const data = await redis.hDel('info:192214', 'age')
+    const data2 = await redis.hSet('info:192214', 'company', 'ufpso')
+    const response = await redis.hGetAll('info:192214');
+    res.send(response)
+})
+
+
+
+
+
+
+app.get('/getHash', async(req,res)=>{
+    const response = await redis.hGetAll('info:192214');
+    const ttl = await redis.ttl('info:192214')
+    res.json({sucess: true, data:response, ttl})
 })
 
